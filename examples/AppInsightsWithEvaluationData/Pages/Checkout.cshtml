@@ -1,0 +1,14 @@
+﻿@page
+@model CheckoutModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Click Below To Check Out!</p>
+
+<button id="checkout" name="checkout" onclick="appInsights.trackEvent({ name: 'Checkout', properties: { 'CheckedOut' : 'Yes' } });var x = document.getElementById('snackbar');x.className=' show' ;setTimeout(function(){ x.className=x.className.replace('show' , '' ); }, 2000);">
+    Check Out
+</button>
+
+<div id="snackbar">Thanks!</div>

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement.Telemetry;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Microsoft.FeatureManagement
         private readonly IEnumerable<IFeatureFilterMetadata> _featureFilters;
         private readonly IEnumerable<ISessionManager> _sessionManagers;
         private readonly ILogger _logger;
+        private readonly ITelemetryPublisher _telemetryPublisher;
         private readonly ConcurrentDictionary<string, IFeatureFilterMetadata> _filterMetadataCache;
         private readonly ConcurrentDictionary<string, ContextualFeatureFilterEvaluator> _contextualFeatureFilterCache;
         private readonly FeatureManagementOptions _options;
@@ -42,6 +44,7 @@ namespace Microsoft.FeatureManagement
             IEnumerable<IFeatureFilterMetadata> featureFilters,
             IEnumerable<ISessionManager> sessionManagers,
             ILoggerFactory loggerFactory,
+            ITelemetryPublisher telemetryPublisher,
             IOptions<FeatureManagementOptions> options)
         {
             _featureDefinitionProvider = featureDefinitionProvider;
@@ -52,16 +55,17 @@ namespace Microsoft.FeatureManagement
             _contextualFeatureFilterCache = new ConcurrentDictionary<string, ContextualFeatureFilterEvaluator>();
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _parametersCache = new MemoryCache(new MemoryCacheOptions());
+            _telemetryPublisher = telemetryPublisher;
         }
 
         public Task<bool> IsEnabledAsync(string feature)
         {
-            return IsEnabledAsync<object>(feature, null, false);
+            return IsEnabledAsyncWithMetrics<object>(feature, null, false);
         }
 
         public Task<bool> IsEnabledAsync<TContext>(string feature, TContext appContext)
         {
-            return IsEnabledAsync(feature, appContext, true);
+            return IsEnabledAsyncWithMetrics(feature, appContext, true);
         }
 
         public async IAsyncEnumerable<string> GetFeatureNamesAsync()
@@ -71,13 +75,32 @@ namespace Microsoft.FeatureManagement
                 yield return featureDefintion.Name;
             }
         }
-
         public void Dispose()
         {
             _parametersCache.Dispose();
         }
 
-        private async Task<bool> IsEnabledAsync<TContext>(string feature, TContext appContext, bool useAppContext)
+        private async Task<bool> IsEnabledAsyncWithMetrics<TContext>(string feature, TContext appContext, bool useAppContext)
+        {
+            EvaluationEvent evaluationEvent = new EvaluationEvent()
+            {
+                Feature = feature,
+                Reason = new Reason()
+            };
+
+            bool result = await IsEnabledAsync(feature, appContext, useAppContext, evaluationEvent).ConfigureAwait(false);
+
+            evaluationEvent.IsEnabled = result;
+
+            if (_telemetryPublisher != null)
+            {
+                await _telemetryPublisher.PublishEvent(evaluationEvent, new System.Threading.CancellationToken());
+            }
+
+            return result;
+        }
+
+        private async Task<bool> IsEnabledAsync<TContext>(string feature, TContext appContext, bool useAppContext, EvaluationEvent evaluationEvent)
         {
             foreach (ISessionManager sessionManager in _sessionManagers)
             {
@@ -85,9 +108,14 @@ namespace Microsoft.FeatureManagement
 
                 if (readSessionResult.HasValue)
                 {
+                    if (!readSessionResult.Value)
+                    {
+                        evaluationEvent.Reason.FlagEnabled = false;
+                    }
                     return readSessionResult.Value;
                 }
             }
+            evaluationEvent.Reason.FlagEnabled = true;
 
             bool enabled;
 
@@ -107,6 +135,8 @@ namespace Microsoft.FeatureManagement
                 if (featureDefinition.EnabledFor == null || !featureDefinition.EnabledFor.Any())
                 {
                     enabled = false;
+
+                    evaluationEvent.Reason.FilterResultType = "DisabledByNoFilters";
                 }
                 else
                 {
@@ -134,6 +164,9 @@ namespace Microsoft.FeatureManagement
                         {
                             if (featureDefinition.RequirementType == RequirementType.Any)
                             {
+                                evaluationEvent.Reason.FilterResultType = "EnabledByFilter";
+                                evaluationEvent.Reason.FilterResultIndex = filterIndex;
+
                                 enabled = true;
                                 break;
                             }
@@ -176,6 +209,16 @@ namespace Microsoft.FeatureManagement
                             {
                                 enabled = targetEvaluation;
 
+                                if (enabled == true)
+                                {
+                                    evaluationEvent.Reason.FilterResultType = "EnabledByFilter";
+                                    evaluationEvent.Reason.FilterResultIndex = filterIndex;
+                                } else
+                                {
+                                    evaluationEvent.Reason.FilterResultType = "DisabledByFilter";
+                                    evaluationEvent.Reason.FilterResultIndex = filterIndex;
+                                }
+
                                 break;
                             }
                         }
@@ -193,6 +236,24 @@ namespace Microsoft.FeatureManagement
                             }
                         }
                     }
+
+                    if (enabled == targetEvaluation)
+                    {
+                        if (targetEvaluation == true)
+                        {
+                            evaluationEvent.Reason.FilterResultType = "EnabledByFilter";
+                            evaluationEvent.Reason.FilterResultIndex = filterIndex;
+                        }
+                        else
+                        {
+                            evaluationEvent.Reason.FilterResultType = "DisabledByFilter";
+                            evaluationEvent.Reason.FilterResultIndex = filterIndex;
+                        }
+                    }
+                    else
+                    {
+                        evaluationEvent.Reason.FilterResultType = "DisabledByFallThrough";
+                    }
                 }
             }
             else
@@ -208,6 +269,8 @@ namespace Microsoft.FeatureManagement
                 
                 _logger.LogWarning(errorMessage);
             }
+
+            evaluationEvent.Reason.EnabledAfterFilters = enabled;
 
             foreach (ISessionManager sessionManager in _sessionManagers)
             {
