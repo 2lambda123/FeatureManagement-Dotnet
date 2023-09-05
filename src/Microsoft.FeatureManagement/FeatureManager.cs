@@ -66,9 +66,9 @@ namespace Microsoft.FeatureManagement
 
         public async IAsyncEnumerable<string> GetFeatureNamesAsync()
         {
-            await foreach (FeatureDefinition featureDefintion in _featureDefinitionProvider.GetAllFeatureDefinitionsAsync().ConfigureAwait(false))
+            await foreach (FeatureDefinition featureDefinition in _featureDefinitionProvider.GetAllFeatureDefinitionsAsync().ConfigureAwait(false))
             {
-                yield return featureDefintion.Name;
+                yield return featureDefinition.Name;
             }
         }
 
