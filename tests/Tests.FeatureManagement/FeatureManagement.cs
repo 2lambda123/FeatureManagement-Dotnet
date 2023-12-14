@@ -5,11 +5,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.FeatureFilters;
+using Microsoft.FeatureManagement.Tests;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -856,7 +858,6 @@ namespace Tests.FeatureManagement
             // Set filters to all return true
             testFeatureFilter.Callback = _ => Task.FromResult(true);
 
-
             Assert.True(await featureManager.IsEnabledAsync(anyFilterFeature));
             Assert.True(await featureManager.IsEnabledAsync(allFilterFeature));
 
@@ -1000,6 +1001,226 @@ namespace Tests.FeatureManagement
             Assert.True(binderCalled);
 
             Assert.True(called);
+        }
+
+        [Fact]
+        public async Task TelemetryPublishing()
+        {
+            IConfiguration config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+            var services = new ServiceCollection();
+
+            services
+                .AddSingleton(config)
+                .AddFeatureManagement()
+                .AddTelemetryPublisher<TestTelemetryPublisher>()
+                .AddFeatureFilter<TimeWindowFilter>();
+
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            FeatureManager featureManager = (FeatureManager) serviceProvider.GetRequiredService<IVariantFeatureManager>();
+            TestTelemetryPublisher testPublisher = (TestTelemetryPublisher) featureManager.TelemetryPublishers.First();
+
+            // Test a feature with telemetry disabled
+            bool result = await featureManager.IsEnabledAsync(Features.OnTestFeature, CancellationToken.None);
+
+            Assert.True(result);
+            Assert.Null(testPublisher.evaluationEventCache);
+
+            // Test telemetry cases
+            const string onFeature = "AlwaysOnTestFeature";
+
+            result = await featureManager.IsEnabledAsync(onFeature, CancellationToken.None);
+
+            Assert.True(result);
+            Assert.Equal(onFeature, testPublisher.evaluationEventCache.FeatureDefinition.Name);
+            Assert.Equal(result, testPublisher.evaluationEventCache.IsEnabled);
+            Assert.Equal("EtagValue", testPublisher.evaluationEventCache.FeatureDefinition.TelemetryMetadata["Etag"]);
+            Assert.Equal("LabelValue", testPublisher.evaluationEventCache.FeatureDefinition.TelemetryMetadata["Label"]);
+            Assert.Equal("Tag1Value", testPublisher.evaluationEventCache.FeatureDefinition.TelemetryMetadata["Tags.Tag1"]);
+
+            const string offFeature = "OffTimeTestFeature";
+
+            result = await featureManager.IsEnabledAsync(offFeature, CancellationToken.None);
+
+            Assert.False(result);
+            Assert.Equal(offFeature, testPublisher.evaluationEventCache.FeatureDefinition.Name);
+            Assert.Equal(result, testPublisher.evaluationEventCache.IsEnabled);
+
+            // Test variant cases
+            const string variantDefaultEnabledFeature = "VariantFeatureDefaultEnabled";
+
+            result = await featureManager.IsEnabledAsync(variantDefaultEnabledFeature, CancellationToken.None);
+
+            Assert.True(result);
+            Assert.Equal(variantDefaultEnabledFeature, testPublisher.evaluationEventCache.FeatureDefinition.Name);
+            Assert.Equal(result, testPublisher.evaluationEventCache.IsEnabled);
+            Assert.Equal("Medium", testPublisher.evaluationEventCache.Variant.Name);
+
+            Variant variantResult = await featureManager.GetVariantAsync(variantDefaultEnabledFeature, CancellationToken.None);
+
+            Assert.True(testPublisher.evaluationEventCache.IsEnabled);
+            Assert.Equal(variantDefaultEnabledFeature, testPublisher.evaluationEventCache.FeatureDefinition.Name);
+            Assert.Equal(variantResult.Name, testPublisher.evaluationEventCache.Variant.Name);
+
+            string variantFeatureStatusDisabled = "VariantFeatureStatusDisabled";
+
+            result = await featureManager.IsEnabledAsync(variantFeatureStatusDisabled, CancellationToken.None);
+
+            Assert.False(result);
+            Assert.Equal(variantFeatureStatusDisabled, testPublisher.evaluationEventCache.FeatureDefinition.Name);
+            Assert.Equal(result, testPublisher.evaluationEventCache.IsEnabled);
+            Assert.Equal("Small", testPublisher.evaluationEventCache.Variant.Name);
+
+            variantResult = await featureManager.GetVariantAsync(variantFeatureStatusDisabled, CancellationToken.None);
+
+            Assert.False(testPublisher.evaluationEventCache.IsEnabled);
+            Assert.Equal(variantFeatureStatusDisabled, testPublisher.evaluationEventCache.FeatureDefinition.Name);
+            Assert.Equal(variantResult.Name, testPublisher.evaluationEventCache.Variant.Name);
+        }
+
+        [Fact]
+        public async Task TelemetryPublishingNullPublisher()
+        {
+            IConfiguration config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+            var services = new ServiceCollection();
+
+            services
+                .AddSingleton(config)
+                .AddFeatureManagement()
+                .AddFeatureFilter<TimeWindowFilter>();
+
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            FeatureManager featureManager = (FeatureManager)serviceProvider.GetRequiredService<IVariantFeatureManager>();
+
+            // Test telemetry enabled feature with no telemetry publisher
+            string onFeature = "AlwaysOnTestFeature";
+
+            bool result = await featureManager.IsEnabledAsync(onFeature, CancellationToken.None);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task UsesVariants()
+        {
+            IConfiguration config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+            var services = new ServiceCollection();
+
+            var targetingContextAccessor = new OnDemandTargetingContextAccessor();
+            services.AddSingleton<ITargetingContextAccessor>(targetingContextAccessor)
+                    .AddSingleton(config)
+                    .AddFeatureManagement();
+
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            IVariantFeatureManager featureManager = serviceProvider.GetRequiredService<IVariantFeatureManager>();
+            CancellationToken cancellationToken = CancellationToken.None;
+
+            targetingContextAccessor.Current = new TargetingContext
+            {
+                UserId = "Marsha",
+                Groups = new List<string> { "Group1" }
+            };
+
+            // Test StatusOverride and Percentile with Seed
+            Variant variant = await featureManager.GetVariantAsync("VariantFeaturePercentileOn", cancellationToken);
+
+            Assert.Equal("Big", variant.Name);
+            Assert.Equal("green", variant.Configuration["Color"]);
+            Assert.False(await featureManager.IsEnabledAsync("VariantFeaturePercentileOn", cancellationToken));
+
+            variant = await featureManager.GetVariantAsync("VariantFeaturePercentileOff", cancellationToken);
+
+            Assert.Null(variant);
+            Assert.True(await featureManager.IsEnabledAsync("VariantFeaturePercentileOff", cancellationToken));
+
+            // Test Status = Disabled
+            variant = await featureManager.GetVariantAsync("VariantFeatureStatusDisabled", cancellationToken);
+
+            Assert.Equal("Small", variant.Name);
+            Assert.Equal("300px", variant.Configuration.Value);
+            Assert.False(await featureManager.IsEnabledAsync("VariantFeatureStatusDisabled", cancellationToken));
+
+            // Test DefaultWhenEnabled and ConfigurationValue with inline IConfigurationSection
+            variant = await featureManager.GetVariantAsync("VariantFeatureDefaultEnabled", cancellationToken);
+
+            Assert.Equal("Medium", variant.Name);
+            Assert.Equal("450px", variant.Configuration["Size"]);
+            Assert.True(await featureManager.IsEnabledAsync("VariantFeatureDefaultEnabled", cancellationToken));
+
+            // Test User allocation
+            variant = await featureManager.GetVariantAsync("VariantFeatureUser", cancellationToken);
+
+            Assert.Equal("Small", variant.Name);
+            Assert.Equal("300px", variant.Configuration.Value);
+            Assert.True(await featureManager.IsEnabledAsync("VariantFeatureUser", cancellationToken));
+
+            // Test Group allocation
+            variant = await featureManager.GetVariantAsync("VariantFeatureGroup", cancellationToken);
+
+            Assert.Equal("Small", variant.Name);
+            Assert.Equal("300px", variant.Configuration.Value);
+            Assert.True(await featureManager.IsEnabledAsync("VariantFeatureGroup", cancellationToken));
+        }
+
+        [Fact]
+        public async Task VariantsInvalidScenarios()
+        {
+            IConfiguration config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+            var services = new ServiceCollection();
+
+            var targetingContextAccessor = new OnDemandTargetingContextAccessor();
+            services.AddSingleton<ITargetingContextAccessor>(targetingContextAccessor)
+                    .AddSingleton(config)
+                    .AddFeatureManagement();
+
+            targetingContextAccessor.Current = new TargetingContext
+            {
+                UserId = "Jeff"
+            };
+
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            IVariantFeatureManager featureManager = serviceProvider.GetRequiredService<IVariantFeatureManager>();
+            CancellationToken cancellationToken = CancellationToken.None;
+
+            // Verify null variant returned if no variants are specified
+            Variant variant = await featureManager.GetVariantAsync("VariantFeatureNoVariants", cancellationToken);
+
+            Assert.Null(variant);
+
+            // Verify null variant returned if no allocation is specified
+            variant = await featureManager.GetVariantAsync("VariantFeatureNoAllocation", cancellationToken);
+
+            Assert.Null(variant);
+
+            // Verify that ConfigurationValue has priority over ConfigurationReference
+            variant = await featureManager.GetVariantAsync("VariantFeatureBothConfigurations", cancellationToken);
+
+            Assert.Equal("600px", variant.Configuration.Value);
+
+            // Verify that an exception is thrown for invalid StatusOverride value
+            FeatureManagementException e = await Assert.ThrowsAsync<FeatureManagementException>(async () =>
+            {
+                variant = await featureManager.GetVariantAsync("VariantFeatureInvalidStatusOverride", cancellationToken);
+            });
+
+            Assert.Equal(FeatureManagementError.InvalidConfigurationSetting, e.Error);
+            Assert.Contains(ConfigurationFields.VariantDefinitionStatusOverride, e.Message);
+
+            // Verify that an exception is thrown for invalid doubles From and To in the Percentile section
+            e = await Assert.ThrowsAsync<FeatureManagementException>(async () =>
+            {
+                variant = await featureManager.GetVariantAsync("VariantFeatureInvalidFromTo", cancellationToken);
+            });
+
+            Assert.Equal(FeatureManagementError.InvalidConfigurationSetting, e.Error);
+            Assert.Contains(ConfigurationFields.PercentileAllocationFrom, e.Message);
         }
     }
 }
