@@ -1,0 +1,306 @@
+repo_name: 2lambda123/FeatureManagement-Dotnet
+report_id: 968a98bb104fe711888300b4f140465c
+version: 0.1
+repo_type: Public
+timestamp: '2024-01-09T07:56:48+00:00'
+requested_by: 2lambda123
+provider: github
+branch: main
+detected_tools_count: 22
+tools:
+- name: C#
+  description: Simple, general-purpose, object-oriented programming language for the
+    .NET platform
+  website_url: http://csharp.net
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1015/1200px-C_Sharp_wordmark.svg.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet
+  detection_source: Repo Metadata
+- name: JavaScript
+  description: Lightweight, interpreted, object-oriented language with first-class
+    functions
+  website_url: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1209/javascript.jpeg
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/examples/EvaluationDataToApplicationInsights/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js
+  detection_source: examples/EvaluationDataToApplicationInsights/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-10-13 22:39:22.000000000 Z
+- name: ".NET"
+  description: A free, cross-platform, open source developer platform for building
+    many different types of applications
+  website_url: http://www.microsoft.com/net/
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Frameworks (Full Stack)
+  image_url: https://img.stackshare.io/service/1014/IoPy1dce_400x400.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/tests/Tests.FeatureManagement/Tests.FeatureManagement.csproj
+  detection_source: tests/Tests.FeatureManagement/Tests.FeatureManagement.csproj
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-10-05 18:26:02.000000000 Z
+- name: ".NET Core"
+  description: An Open Source, General-Purpose Development Platform Maintained by
+    Microsoft and the .NET Community
+  website_url: https://docs.microsoft.com/en-us/dotnet/core/
+  version: '6.0'
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Frameworks (Full Stack)
+  image_url: https://img.stackshare.io/service/6403/default_91fc1f0ee315262794273aa1387eaf8fed8436e6.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/examples/ConsoleApp/ConsoleApp.csproj
+  detection_source: examples/ConsoleApp/ConsoleApp.csproj
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-10-12 18:29:31.000000000 Z
+- name: ASP.NET Core
+  description: A cross-platform .NET framework for building modern cloud-based web
+    applications on Windows, Mac, or Linux
+  website_url: docs.microsoft.com/en-us/aspnet/core/
+  version: '6.0'
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Frameworks (Full Stack)
+  image_url: https://img.stackshare.io/service/11331/asp.net-core.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/examples/ConsoleApp/ConsoleApp.csproj
+  detection_source: examples/ConsoleApp/ConsoleApp.csproj
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-10-12 18:29:31.000000000 Z
+- name: Git
+  description: Fast, scalable, distributed revision control system
+  website_url: http://git-scm.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Version Control System
+  image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet
+  detection_source: Repo Metadata
+- name: NuGet
+  description: The package manager for .NET
+  website_url: https://www.nuget.org/
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Package Managers
+  image_url: https://img.stackshare.io/service/2637/6I3oEOP4_400x400.jpg
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/tests/Tests.FeatureManagement/Tests.FeatureManagement.csproj
+  detection_source: tests/Tests.FeatureManagement/Tests.FeatureManagement.csproj
+  last_updated_by: Jimmy Campbell
+  last_updated_on: 2019-07-01 17:26:52.000000000 Z
+- name: Visual Studio
+  description: State-of-the-art tools and services that you can use to create great
+    apps for devices, the cloud, and everything in between.
+  website_url: http://msdn.microsoft.com/en-us/vstudio/aa718325.aspx
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Integrated Development Environment
+  image_url: https://img.stackshare.io/service/1451/SR2hUhQN.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/Microsoft.FeatureManagement.sln
+  detection_source: Microsoft.FeatureManagement.sln
+  last_updated_by: Jimmy Campbell
+  last_updated_on: 2022-03-29 20:48:15.000000000 Z
+- name: xUnit
+  description: An open source, community-focused unit testing tool
+  website_url: http://xunit.github.io/
+  version: 2.4.1
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Testing Frameworks
+  image_url: https://img.stackshare.io/service/3077/ca5a327feb49ddfe1f4b11548907e5a1_400x400.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/tests/Tests.FeatureManagement.AspNetCore/Tests.FeatureManagement.AspNetCore.csproj
+  detection_source: tests/Tests.FeatureManagement.AspNetCore/Tests.FeatureManagement.AspNetCore.csproj
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-10-05 18:26:02.000000000 Z
+- name: PowerShell
+  description: A task automation and configuration management framework
+  website_url: https://docs.microsoft.com/en-us/powershell/
+  open_source: false
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/3681/powershell-logo.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet
+  detection_source: Repo Metadata
+- name: Microsoft.ApplicationInsights
+  description: Application Insights Base API
+  package_url: https://www.nuget.org/Microsoft.ApplicationInsights
+  version: 2.21.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/13015/default_dd10728859f7e363ef13345d855b2daba48cace4.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/src/Microsoft.FeatureManagement.Telemetry.ApplicationInsights/Microsoft.FeatureManagement.Telemetry.ApplicationInsights.csproj
+  detection_source: src/Microsoft.FeatureManagement.Telemetry.ApplicationInsights/Microsoft.FeatureManagement.Telemetry.ApplicationInsights.csproj
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-10-12 23:37:58.000000000 Z
+- name: Microsoft.ApplicationInsights.AspNetCore
+  description: Application Insights for ASP.NET Core web applications
+  package_url: https://www.nuget.org/Microsoft.ApplicationInsights.AspNetCore
+  version: 2.21.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/13203/default_e23dabba1be2c69fbf5fc50bdc46cbffbe6ca2cb.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/examples/EvaluationDataToApplicationInsights/EvaluationDataToApplicationInsights.csproj
+  detection_source: examples/EvaluationDataToApplicationInsights/EvaluationDataToApplicationInsights.csproj
+  last_updated_by: Jimmy Campbell
+  last_updated_on: 2023-11-07 19:09:20.000000000 Z
+- name: Microsoft.AspNetCore.TestHost
+  description: ASP.NET Core web server for writing and running tests
+  package_url: https://www.nuget.org/Microsoft.AspNetCore.TestHost
+  version: 6.0.22
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/13268/default_3b9faa77d26eef0a944d4dab8d562db23059cb72.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/tests/Tests.FeatureManagement.AspNetCore/Tests.FeatureManagement.AspNetCore.csproj
+  detection_source: tests/Tests.FeatureManagement.AspNetCore/Tests.FeatureManagement.AspNetCore.csproj
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-10-05 18:26:02.000000000 Z
+- name: Microsoft.Bcl.AsyncInterfaces
+  description: Provides the IAsyncEnumerable&lt;T&gt; and IAsyncDisposable interfaces
+    and helper types for .NET Standard 2.0
+  package_url: https://www.nuget.org/Microsoft.Bcl.AsyncInterfaces
+  version: 1.1.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/13612/default_8262e69d511886f07f1af08ca996ce9684bb574b.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/src/Microsoft.FeatureManagement/Microsoft.FeatureManagement.csproj
+  detection_source: src/Microsoft.FeatureManagement/Microsoft.FeatureManagement.csproj
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-06-02 00:24:07.000000000 Z
+- name: Microsoft.Extensions.Caching.Memory
+  description: In-memory cache implementation of Microsoft.Extensions.Caching.Memory.IMemoryCache
+  package_url: https://www.nuget.org/Microsoft.Extensions.Caching.Memory
+  version: 2.1.23
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/12906/default_4b18ad6ce0b5b2bd1dc822207c362ce8e0f74098.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/src/Microsoft.FeatureManagement/Microsoft.FeatureManagement.csproj
+  detection_source: src/Microsoft.FeatureManagement/Microsoft.FeatureManagement.csproj
+  last_updated_by: Zhiyuan Liang
+  last_updated_on: 2023-12-13 04:55:09.000000000 Z
+- name: Microsoft.Extensions.Configuration.Binder
+  description: Functionality to bind an object to data in configuration providers
+    for Microsoft.Extensions.Configuration
+  package_url: https://www.nuget.org/Microsoft.Extensions.Configuration.Binder
+  version: 2.1.10
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/12893/default_4e8402857d2ce7356903ee7422d9b4a0f23cc137.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/src/Microsoft.FeatureManagement/Microsoft.FeatureManagement.csproj
+  detection_source: src/Microsoft.FeatureManagement/Microsoft.FeatureManagement.csproj
+  last_updated_by: Zhiyuan Liang
+  last_updated_on: 2023-12-13 04:55:09.000000000 Z
+- name: Microsoft.Extensions.Configuration.EnvironmentVariables
+  description: Environment variables configuration provider implementation for Microsoft.Extensions.Configuration
+  package_url: https://www.nuget.org/Microsoft.Extensions.Configuration.EnvironmentVariables
+  version: 7.0.0
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/12955/default_85d1877c90581261989cc5e05023faec547467b3.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/tests/Tests.FeatureManagement/Tests.FeatureManagement.csproj
+  detection_source: tests/Tests.FeatureManagement/Tests.FeatureManagement.csproj
+  last_updated_by: Zhiyuan Liang
+  last_updated_on: 2023-11-15 01:22:01.000000000 Z
+- name: Microsoft.Extensions.Configuration.Json
+  description: JSON configuration provider implementation for Microsoft.Extensions.Configuration
+  package_url: https://www.nuget.org/Microsoft.Extensions.Configuration.Json
+  version: 6.0.0
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/12865/default_4ea11141d2970a66e9637b71cf054ab66968c217.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/examples/ConsoleApp/ConsoleApp.csproj
+  detection_source: examples/ConsoleApp/ConsoleApp.csproj
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-10-12 18:29:31.000000000 Z
+- name: Microsoft.Extensions.DependencyInjection
+  description: Default implementation of dependency injection for Microsoft.Extensions.DependencyInjection
+  package_url: https://www.nuget.org/Microsoft.Extensions.DependencyInjection
+  version: 6.0.0
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/12846/default_0f5233770e71818507f2339042e7e61bef904e70.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/examples/ConsoleApp/ConsoleApp.csproj
+  detection_source: examples/ConsoleApp/ConsoleApp.csproj
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-10-12 18:29:31.000000000 Z
+- name: Microsoft.Extensions.Logging
+  description: Logging infrastructure default implementation for Microsoft.Extensions.Logging
+  package_url: https://www.nuget.org/Microsoft.Extensions.Logging
+  version: 2.1.1
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/12854/default_ccf90b566c21ad9eaa59733f297e535ea39fb3b4.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/src/Microsoft.FeatureManagement/Microsoft.FeatureManagement.csproj
+  detection_source: src/Microsoft.FeatureManagement/Microsoft.FeatureManagement.csproj
+  last_updated_by: Zhiyuan Liang
+  last_updated_on: 2023-12-13 04:55:09.000000000 Z
+- name: xunit.assert
+  description: Includes the assertion library from xUnit.net
+  package_url: https://www.nuget.org/xunit.assert
+  version: 2.4.1
+  license: Other
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/13418/default_de77a8370e47861dfbe30f06e25c22916ed609b5.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/src/Microsoft.FeatureManagement/Microsoft.FeatureManagement.csproj
+  detection_source: src/Microsoft.FeatureManagement/Microsoft.FeatureManagement.csproj
+  last_updated_by: Amer Jusupovic
+  last_updated_on: 2023-09-13 18:29:56.000000000 Z
+- name: xunit.runner.visualstudio
+  description: Visual Studio 2012+ Test Explorer runner for the xUnit.net framework
+  package_url: https://www.nuget.org/xunit.runner.visualstudio
+  version: 2.4.2
+  license: Other
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: NuGet Packages
+  image_url: https://img.stackshare.io/package/13260/default_d2db5a200c4fe2d08cbdb2174cc230708973870b.png
+  detection_source_url: https://github.com/2lambda123/FeatureManagement-Dotnet/blob/main/tests/Tests.FeatureManagement.AspNetCore/Tests.FeatureManagement.AspNetCore.csproj
+  detection_source: tests/Tests.FeatureManagement.AspNetCore/Tests.FeatureManagement.AspNetCore.csproj
+  last_updated_by: Ross Grambo
+  last_updated_on: 2023-10-05 18:26:02.000000000 Z
